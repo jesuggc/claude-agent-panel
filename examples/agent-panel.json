@@ -1,0 +1,10 @@
+{
+  "title": "My YouTube channel",
+  "agents": {
+    "scout":      {"icon": "🔭", "color": "#3ECF8E", "role": "Finds topics with traction"},
+    "guionista":  {"icon": "✍️", "color": "#D97757", "role": "Writes the script"},
+    "revisor":    {"icon": "🔍", "color": "#4E9BF2", "role": "Checks facts and policies"},
+    "productor":  {"icon": "🎬", "color": "#F2685A", "role": "Voice, editing and visual QA"},
+    "publicador": {"icon": "🚀", "color": "#A06CF0", "role": "Uploads to YouTube"}
+  }
+}

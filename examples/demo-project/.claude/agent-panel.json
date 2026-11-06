@@ -1,0 +1,10 @@
+{
+  "title": "Demo project",
+  "agents": {
+    "planner":     {"icon": "🗺️"},
+    "coder":       {"icon": "⌨️"},
+    "tester":      {"icon": "🧪"},
+    "reviewer":    {"icon": "🔍"},
+    "docs-writer": {"icon": "📝"}
+  }
+}

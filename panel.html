@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>Agent Panel</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<style>
+:root{--bg:#0f1117;--card:#181b24;--borde:#262a36;--texto:#e6e6ea;--suave:#8b90a0;--oro:#f2c14e;--verde:#3ecf8e;--azul:#4ea8f2;--rojo:#f2685a}
+*{box-sizing:border-box}body{margin:0;font:14px/1.45 system-ui,sans-serif;background:var(--bg);color:var(--texto)}
+header{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;padding:16px 24px;border-bottom:1px solid var(--borde)}
+h1{font-size:18px;margin:0}h1 span{color:var(--oro)}h2{font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--suave);margin:0 0 12px}
+main{padding:20px 24px;display:grid;gap:28px}.suave{color:var(--suave)}
+.equipo{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:12px}
+.agente{background:var(--card);border:1px solid var(--borde);border-radius:10px;padding:12px 14px;min-height:118px;display:grid;grid-template-columns:76px 1fr;gap:12px;align-items:start}
+.agente .info{min-width:0}
+.bicho-caja{position:relative;height:76px;display:flex;align-items:flex-end;justify-content:center}
+.bicho{width:68px;height:51px;overflow:visible;transform-origin:50% 100%;animation:respira 3.2s ease-in-out infinite;filter:saturate(.55) brightness(.8)}
+.bicho rect{transform-box:fill-box;transform-origin:50% 0}
+.bicho .ojo{transform-origin:50% 50%;animation:parpadeo 4.5s infinite}
+.bicho .sombra{fill:#000;opacity:.25}
+.globo{position:absolute;top:-4px;right:-6px;font-size:16px;background:#232734;border:1px solid var(--borde);border-radius:10px;padding:0 4px;line-height:22px}
+.on .bicho{filter:none;animation:salto .45s ease-in-out infinite}
+.on .bicho .pata-a{animation:paso .45s steps(2) infinite}
+.on .bicho .pata-b{animation:paso .45s steps(2) infinite reverse}
+.on .bicho .brazo{animation:brazo .45s ease-in-out infinite}
+.on .globo{border-color:var(--c);animation:flota 1.6s ease-in-out infinite}
+@keyframes respira{50%{transform:scaleY(.95)}}
+@keyframes salto{50%{transform:translateY(-6px)}}
+@keyframes paso{0%{transform:scaleY(1)}100%{transform:scaleY(.4)}}
+@keyframes brazo{50%{transform:translateY(-1px)}}
+@keyframes parpadeo{0%,94%,100%{transform:scaleY(1)}97%{transform:scaleY(.1)}}
+@keyframes flota{50%{transform:translateY(-3px)}}
+.agente.on{border-color:var(--c);box-shadow:0 0 0 1px var(--c) inset,0 0 18px -6px var(--c)}
+.agente .cab{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}.agente b{font-size:15px}
+.estado{font-size:11px;padding:2px 8px;border-radius:99px;background:#232734;color:var(--suave);white-space:nowrap;flex-shrink:0}
+.on .estado{background:color-mix(in srgb,var(--c) 18%,transparent);color:var(--c)}
+.on .estado::before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--c);margin-right:6px;animation:p 1.2s infinite}
+@keyframes p{50%{opacity:.25}}
+.rol{font-size:12px;color:var(--suave);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.accion{margin-top:8px;font-size:12px;color:var(--suave);word-break:break-word;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.on .accion{color:var(--texto)}
+.dos{display:grid;grid-template-columns:1fr 1fr;gap:28px}@media(max-width:900px){.dos{grid-template-columns:1fr}}
+table{width:100%;border-collapse:collapse;font-size:13px}td{padding:7px 6px;border-bottom:1px solid var(--borde);vertical-align:top}
+.log td:first-child,.runs td:first-child{color:var(--suave);white-space:nowrap;width:70px}.ag{color:var(--oro);white-space:nowrap}
+.runs .num{text-align:right;white-space:nowrap;color:var(--suave)}.runs .vivo{color:var(--verde)}
+.det{word-break:break-word}
+.aviso{background:#2a2414;border:1px solid #5a4a1c;color:#f2d38a;padding:10px 14px;border-radius:8px}
+.aviso code{background:#0004;padding:1px 5px;border-radius:4px}
+#turno{display:none;align-items:center;gap:14px;background:linear-gradient(90deg,#3a2a0c,#2a2110);border:1px solid var(--oro);color:#ffe3a0;padding:14px 18px;border-radius:10px;font-size:15px;animation:aviso 1.6s ease-in-out infinite}
+#turno.on{display:flex}#turno b{font-size:17px}#turno .campana{font-size:26px;animation:campana 1.6s ease-in-out infinite;transform-origin:50% 0}
+@keyframes aviso{50%{box-shadow:0 0 22px -4px var(--oro)}}
+@keyframes campana{0%,60%,100%{transform:rotate(0)}10%{transform:rotate(18deg)}25%{transform:rotate(-14deg)}40%{transform:rotate(8deg)}}
+.boton,select{background:#232734;color:var(--texto);border:1px solid var(--borde);border-radius:8px;padding:6px 12px;font:inherit;font-size:13px;cursor:pointer}
+.boton.activo{border-color:var(--oro);color:var(--oro)}
+.cab-der{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+</style></head><body>
+<header><h1>🤖 <span id="titulo">Agent Panel</span> <span class="suave" id="ruta" style="font-size:12px;font-weight:400;color:var(--suave)"></span></h1>
+<div class="cab-der"><select id="proyecto" hidden onchange="cambiarProyecto(this.value)"></select>
+<button class="boton" id="sonido" onclick="alternarSonido()"></button><div class="suave" id="reloj"></div></div></header>
+<main>
+<div id="turno"><span class="campana">🔔</span><div><b data-t="yourTurn"></b><div id="turno-motivo"></div></div></div>
+<div id="aviso"></div>
+<section><h2 data-t="team"></h2><div class="equipo" id="equipo"></div></section>
+<section class="dos">
+  <div><h2 data-t="activity"></h2><table class="log" id="log"></table></div>
+  <div><h2 data-t="runs"></h2><table class="runs" id="runs"></table></div>
+</section>
+</main>
+<script>
+const I18N={
+  es:{yourTurn:"Te toca",team:"Equipo",activity:"Actividad reciente",runs:"Ejecuciones recientes",
+    working:"trabajando",idle:"en espera",actions:"acciones",since:"desde",starting:"arrancando…",
+    lastTime:"Última vez",today:"hoy",never:"Sin actividad registrada",now:"ahora",ago:(n,u)=>`hace ${n} ${u}`,
+    soundOn:"🔔 Alerta sonora activada",soundOff:"🔕 Activar alerta sonora",updated:"actualizado",offline:"⚠️ sin conexión",
+    noData:`Aún no hay actividad registrada. Instala los hooks con <code>python3 agent_panel.py install</code>, reinicia Claude Code y usa cualquier herramienta.`,
+    noTeam:"No hay subagentes definidos en <code>.claude/agents/</code>. Los integrados aparecerán cuando se usen.",
+    waits:"⏸ espera tu respuesta",replies:"💬 respondes",starts:"▶ empieza",ends:"■ termina",launches:"lanza",sessionEnd:"⏹ fin de sesión",
+    main:"principal",empty:"—",running:"en curso",sessions:n=>` · ${n} sesiones esperando`,
+    reasons:{permission_prompt:"Claude necesita tu permiso para continuar",idle_prompt:"Claude lleva un rato esperando tu respuesta",
+      elicitation_dialog:"Claude te está haciendo una pregunta",stop:"Claude ha terminado y espera tu respuesta",notification:"Claude necesita tu atención"}},
+  en:{yourTurn:"Your turn",team:"Team",activity:"Recent activity",runs:"Recent runs",
+    working:"working",idle:"idle",actions:"actions",since:"since",starting:"starting…",
+    lastTime:"Last seen",today:"today",never:"No activity yet",now:"just now",ago:(n,u)=>`${n} ${u} ago`,
+    soundOn:"🔔 Sound alert on",soundOff:"🔕 Enable sound alert",updated:"updated",offline:"⚠️ offline",
+    noData:`No activity recorded yet. Install the hooks with <code>python3 agent_panel.py install</code>, restart Claude Code and use any tool.`,
+    noTeam:"No subagents defined in <code>.claude/agents/</code>. Built-in ones appear once they are used.",
+    waits:"⏸ waiting for you",replies:"💬 you reply",starts:"▶ starts",ends:"■ finishes",launches:"launches",sessionEnd:"⏹ session ended",
+    main:"main",empty:"—",running:"running",sessions:n=>` · ${n} sessions waiting`,
+    reasons:{permission_prompt:"Claude needs your permission to continue",idle_prompt:"Claude has been waiting for your reply",
+      elicitation_dialog:"Claude is asking you a question",stop:"Claude has finished and is waiting for you",notification:"Claude needs your attention"}},
+};
+const lang=(new URLSearchParams(location.search).get("lang")||navigator.language||"en").slice(0,2)==="es"?"es":"en";
+const T=I18N[lang]; document.documentElement.lang=lang;
+document.querySelectorAll("[data-t]").forEach(el=>el.textContent=T[el.dataset.t]);
+
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const hora=s=>s?s.slice(11,16):"";
+function hace(s){if(!s)return"";const m=Math.round((Date.now()-new Date(s))/60000);
+  return m<1?T.now:m<60?T.ago(m,"min"):m<1440?T.ago(Math.round(m/60),"h"):T.ago(Math.round(m/1440),"d")}
+function dur(a,b){const s=Math.max(0,Math.round((new Date(b)-new Date(a))/1000));return s<60?`${s}s`:s<3600?`${Math.round(s/60)} min`:`${(s/3600).toFixed(1)} h`}
+
+let proyecto=decodeURIComponent(location.hash.slice(1))||null, equipoPintado="";
+function cambiarProyecto(id){proyecto=id;location.hash=encodeURIComponent(id);equipoPintado="";refrescar()}
+
+async function refrescar(){
+  let d;try{d=await (await fetch("/api/state"+(proyecto?`?project=${encodeURIComponent(proyecto)}`:""))).json()}
+  catch(e){document.getElementById("reloj").textContent=T.offline;return}
+  document.getElementById("reloj").textContent=`${T.updated} ${hora(d.now)}`;
+  const sel=document.getElementById("proyecto");
+  sel.hidden=d.projects.length<2;
+  const opciones=d.projects.map(p=>`<option value="${esc(p.id)}">${esc(p.name)}</option>`).join("");
+  if(sel.dataset.v!==opciones){sel.innerHTML=opciones;sel.dataset.v=opciones}
+  if(!d.project){document.getElementById("aviso").innerHTML=`<div class="aviso">${T.noData}</div>`;return}
+  sel.value=d.project.id;
+  const titulo=d.title||d.project.name;
+  document.getElementById("titulo").textContent=titulo;
+  document.getElementById("ruta").textContent=d.project.shown;
+  avisar(d.waiting||{},titulo);
+  document.getElementById("aviso").innerHTML=d.team.length?"":`<div class="aviso">${T.noTeam}</div>`;
+  pintarEquipo(d.team);
+  document.getElementById("log").innerHTML=d.events.map(e=>{
+    const txt=e.event==="Stop"?T.waits:e.event==="UserPromptSubmit"?T.replies:e.event==="SessionEnd"?T.sessionEnd
+      :e.event==="Notification"?`🔔 ${esc(e.detail)}`:e.event==="SubagentStart"?T.starts:e.event==="SubagentStop"?T.ends
+      :(e.tool==="Agent"||e.tool==="Task")&&!e.agent_id?`${T.launches} ${esc(e.detail)}`:`${esc(e.tool)} · ${esc(e.detail)}`;
+    return `<tr><td>${hora(e.ts)}</td><td class="ag">${esc(e.agent||(e.agent_id?"":T.main))}</td><td class="det">${txt}</td></tr>`}).join("")
+    ||`<tr><td class="suave">${T.empty}</td></tr>`;
+  document.getElementById("runs").innerHTML=d.runs.map(r=>`<tr><td>${hora(r.start)}</td><td class="ag">${esc(r.agent)}</td>
+    <td class="num ${r.active?"vivo":""}">${r.active?"● "+T.running:dur(r.start,r.end||r.last)}</td><td class="num">${r.tools} ${T.actions}</td></tr>`).join("")
+    ||`<tr><td class="suave">${T.empty}</td></tr>`;
+}
+function bicho(color){
+  // Pixel critter: body, arms, eyes and four legs (16x12 grid)
+  return `<svg class="bicho" viewBox="0 -1 16 13" shape-rendering="crispEdges" aria-hidden="true">
+    <rect class="sombra" x="2" y="11" width="12" height="1"/>
+    <g fill="${esc(color)}">
+      <rect class="brazo" x="0" y="3" width="2" height="2"/><rect class="brazo" x="14" y="3" width="2" height="2"/>
+      <rect x="2" y="0" width="12" height="7"/>
+      <rect class="pata-a" x="3" y="7" width="1" height="3"/><rect class="pata-b" x="5" y="7" width="1" height="3"/>
+      <rect class="pata-a" x="10" y="7" width="1" height="3"/><rect class="pata-b" x="12" y="7" width="1" height="3"/>
+    </g>
+    <rect class="ojo" x="4" y="2" width="1" height="2" fill="#141414"/><rect class="ojo" x="11" y="2" width="1" height="2" fill="#141414"/>
+  </svg>`;
+}
+function pintarEquipo(equipo){
+  const cont=document.getElementById("equipo"), firma=equipo.map(a=>a.name+a.color+a.icon+a.role).join("|");
+  if(equipoPintado!==firma){
+    equipoPintado=firma;
+    cont.innerHTML=equipo.map((a,i)=>`
+      <div class="agente" id="ag-${i}" style="--c:${esc(a.color)}">
+        <div class="bicho-caja">${bicho(a.color)}<span class="globo">${esc(a.icon)}</span></div>
+        <div class="info">
+          <div class="cab"><b>${esc(a.name)}</b><span class="estado"></span></div>
+          <div class="rol" title="${esc(a.role)}">${esc(a.role)}</div>
+          <div class="accion"></div>
+        </div>
+      </div>`).join("");
+  }
+  equipo.forEach((a,i)=>{
+    const el=document.getElementById("ag-"+i);
+    el.classList.toggle("on",a.working);
+    el.querySelector(".estado").textContent=a.working?T.working+(a.parallel>1?` ×${a.parallel}`:""):T.idle;
+    el.querySelector(".accion").innerHTML=a.working
+      ?`${a.tools} ${T.actions} · ${T.since} ${hora(a.since)}<br>${esc(a.action||T.starting)}`
+      :(a.last_seen?`${T.lastTime} ${hace(a.last_seen)}${a.today?` · ${a.today} ${T.today}`:""}`:T.never);
+  });
+}
+// ---------- alert when everything is waiting for the user ----------
+let ctx=null, sonidoOn=localStorage.getItem("sonido")==="1", ultimoAviso=null, ultimoRepique=0;
+const REPETIR_MS=5*60*1000;
+function pintarBotonSonido(){
+  const b=document.getElementById("sonido");
+  b.textContent=sonidoOn?T.soundOn:T.soundOff;
+  b.classList.toggle("activo",sonidoOn);
+}
+function alternarSonido(){
+  sonidoOn=!sonidoOn; localStorage.setItem("sonido",sonidoOn?"1":"0");
+  if(sonidoOn){
+    ctx=ctx||new (window.AudioContext||window.webkitAudioContext)(); ctx.resume(); campanilla();
+    if("Notification" in window && Notification.permission==="default") Notification.requestPermission();
+  }
+  pintarBotonSonido();
+}
+function campanilla(){
+  if(!sonidoOn) return;
+  ctx=ctx||new (window.AudioContext||window.webkitAudioContext)();
+  const t0=ctx.currentTime;
+  [[880,0],[1320,0.18],[1760,0.36]].forEach(([f,dt])=>{
+    const o=ctx.createOscillator(), g=ctx.createGain();
+    o.type="sine"; o.frequency.value=f;
+    g.gain.setValueAtTime(0.0001,t0+dt); g.gain.exponentialRampToValueAtTime(0.25,t0+dt+0.02);
+    g.gain.exponentialRampToValueAtTime(0.0001,t0+dt+0.9);
+    o.connect(g).connect(ctx.destination); o.start(t0+dt); o.stop(t0+dt+1);
+  });
+}
+function avisar(esp,titulo){
+  const caja=document.getElementById("turno");
+  caja.classList.toggle("on",!!esp.yes);
+  document.title=(esp.yes?`🔔 ${T.yourTurn} · `:"")+titulo;
+  if(!esp.yes){ultimoAviso=null;return}
+  const motivo=T.reasons[esp.reason]||esp.detail||T.reasons.notification;
+  document.getElementById("turno-motivo").textContent=`${motivo} · ${T.since} ${hora(esp.since)}${esp.count>1?T.sessions(esp.count):""}`;
+  const ahora=Date.now(), clave=esp.session+esp.since;
+  if(ultimoAviso!==clave){            // new wait: ring and notify
+    ultimoAviso=clave; ultimoRepique=ahora; campanilla();
+    if(sonidoOn && "Notification" in window && Notification.permission==="granted" && document.hidden)
+      new Notification(`🔔 ${T.yourTurn}`,{body:`${titulo}: ${motivo}`});
+  } else if(ahora-ultimoRepique>REPETIR_MS){ // reminder while still waiting
+    ultimoRepique=ahora; campanilla();
+  }
+}
+pintarBotonSonido();
+refrescar();setInterval(refrescar,2000);
+</script></body></html>
