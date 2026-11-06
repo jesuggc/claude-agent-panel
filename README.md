@@ -14,7 +14,7 @@ A live web dashboard for your [Claude Code](https://claude.com/claude-code) suba
 ## Install
 
 ```bash
-git clone https://github.com/<you>/claude-agent-panel.git
+git clone https://github.com/jesuggc/claude-agent-panel.git
 cd claude-agent-panel
 python3 agent_panel.py install          # adds the hooks to ~/.claude/settings.json (all projects)
 # or: python3 agent_panel.py install --project /path/to/project   (only that project)
